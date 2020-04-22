@@ -1,0 +1,4 @@
+[submodule "x86-bare-metal-examples"]
+	path = x86-bare-metal-examples
+	url = https://github.com/cirosantilli/x86-bare-metal-examples.git
+	branch = master
