@@ -3,7 +3,7 @@ Para mas informacion revisar la presentación doc/Modo real vs modo protegido.pd
 
 TLDR
 
-git clone https://gitlab.unc.edu.ar/javierjorge/protected-mode-sdc.git
+git clone https://gitlab.com/sistemas-de-computacion-2021/protected-mode-sdc.git
 
 git submodule init 
 
