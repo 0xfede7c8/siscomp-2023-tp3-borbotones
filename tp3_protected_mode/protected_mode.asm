@@ -5,6 +5,7 @@ WHITE_ON_BLACK equ 0x0f
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 
+
 ;Inicio de sector de booteo
 [org 0x7c00]
     ;Setea el modo de video a 80 columnas y 25 lineas
@@ -29,7 +30,7 @@ gdt_start:
     gdt_null:          ; El descriptor nulo
     dd 0x0             
     dd 0x0
-        
+
 gdt_code:                  ; El  segmento descriptor de codigo
                            ; base=0x0, limit=0xfffff ,
                            ; 1st flags: (present)1 (privilege)00 
@@ -43,13 +44,12 @@ gdt_code:                  ; El  segmento descriptor de codigo
     db 0x0                 ; Base (bits 16 -23)
     db 10011010b           ; 1001(P DPL S) 1010(type codigo no 
                            ;accedido)
-    db 11001111b           ; 1100 ( G D/B 0 AVL)  ,1111  Limite
-                           ; (bits 16 -19)
+    db 11001111b           ; 1100 ( G D/B 0 AVL)  ,1111  Limite (bits 16 -19)
     db 0x0                 ; Base (bits 24 -31)
 
 gdt_data:                  ; El  segmento descriptor de datos
                            ; Igual que el segmento de código 
-                           ;excepto por los flags.
+                           ;ecepto por los flags.
                            ; type flags: (code)0 (expand down)0 
                            ;(writable)1 (accessed)0 -> 0010b
     dw 0xFFFF              ; Limite (bits 0 -15)
@@ -57,10 +57,13 @@ gdt_data:                  ; El  segmento descriptor de datos
     db 0x0                 ; Base (bits 16 -23)
     db 10010010b           ;  1001(P DPL S) 0010(type codigo no 
                            ;accedido)
-    db 11001111b           ; 1100 ( G D/B 0 AVL)  ,1111  Limite 
-                           ;(bits 16 -19)
+    db 11001111b           ; 1100 ( G D/B 0 AVL)  ,1111  Limite (bits 16 -19)   
+                           ;
     db 0x0                 ; Base (bits 24 -31)
-gdt_end:                   ; Tag para poder calcular el tamaño de la GDT
+gdt_end:                   ; El motivo para colocar un rotulo al 
+                           ;final de la tabla GDT es que el     
+                           ; compilador pueda calcular la longitud
+                           ; de la tabla  gdt_end - gdt_start - 1
                              
 ;GDT descriptor
 gdt_descriptor:
@@ -85,26 +88,23 @@ initialize_seg_regs:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ebp, 0x7000        ; Seteamos el stack en 0x7000
+    mov ebp, 0x9000        ; Seteamos el stack en 0x9000 (arbitrario)
     mov esp, ebp
  
     ; Estamos en PM, podemos imprimir el mensaje
     mov ebx, msg_mp
     call print_string_pm
-
-    ;mov ebx, data_only_read
-    ;call print_string_pm ; Usamos  nuestra rutina para imprimir en PM.
    
     jmp $ ; Loop infinito
 
 
-; Imprime una cadena de caracteres terminadas en null apuntada por  EBX
+; Imprime una cadena de caracteres terminadas en null apuntada por EBX
 print_string_pm:
            pusha
            mov edx, VIDEO_MEMORY    ;Se inicializa EDX a la segunda
                                     ;linea de la memoria de video.
 print_string_pm_loop:
-           mov al, [ebx]            ;El caracter apuntado por  EBX 
+           mov al, [ebx]            ;El caracter apuntado por EBX
                                     ;se mueve a  AL
            mov ah, WHITE_ON_BLACK   ;Carga AH con el atributo de
                                     ;video
