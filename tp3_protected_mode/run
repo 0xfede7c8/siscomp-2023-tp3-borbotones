@@ -1,0 +1,13 @@
+#!/bin/sh
+img="${1:-}"
+if [ -n "$img" ]; then
+  img="RUN=${img%.*}"
+fi
+shift
+if [ $# -ge 1 ]; then
+  type="$1"
+  shift
+else
+  type=run
+fi
+make RUN_ARGS="$*" "${type}" "${img}"
